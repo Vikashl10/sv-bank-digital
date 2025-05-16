@@ -21,8 +21,20 @@ const Register = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     // In a real implementation, this would send data to the backend
     console.log("Registration data:", formData);
+    
+    // Simulate a successful registration
+    alert("Registration successful! Please login.");
+    // Redirect to login page
+    window.location.href = "/login";
   };
 
   return (

@@ -1,16 +1,48 @@
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IndianRupee } from "lucide-react";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would validate credentials with the backend
-    console.log("Login attempt with:", { username, password });
+    setError("");
+    setLoading(true);
+
+    try {
+      // In a real app, this would connect to the backend API
+      console.log("Login attempt with:", { username, password });
+
+      // Simulate API call with hardcoded successful login for demo
+      const userData = {
+        userId: 1,
+        username: username,
+        firstName: "John",
+        lastName: "Doe",
+        email: "john@example.com",
+        accountNumber: "SV00012345",
+        accountId: 1,
+        balance: 85500.00
+      };
+
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Redirect to dashboard
+      navigate("/dashboard");
+
+    } catch (err) {
+      setError("Invalid username or password");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -92,6 +124,21 @@ const Login = () => {
             marginBottom: "24px",
             textAlign: "center"
           }}>Login to Your Account</h2>
+          
+          {error && (
+            <div style={{
+              backgroundColor: "#ffe2e5",
+              color: "#ef4444",
+              padding: "10px",
+              borderRadius: "4px",
+              marginBottom: "16px",
+              fontSize: "14px",
+              textAlign: "center"
+            }}>
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "16px" }}>
               <label
@@ -145,6 +192,7 @@ const Login = () => {
             </div>
             <button
               type="submit"
+              disabled={loading}
               style={{
                 width: "100%",
                 backgroundColor: "#9b87f5",
@@ -154,10 +202,11 @@ const Login = () => {
                 borderRadius: "4px",
                 fontSize: "16px",
                 fontWeight: "500",
-                cursor: "pointer"
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1
               }}
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
           <div style={{

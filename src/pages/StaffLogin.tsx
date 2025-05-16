@@ -1,16 +1,46 @@
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IndianRupee } from "lucide-react";
 
 const StaffLogin = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would validate staff credentials
-    console.log("Staff login attempt with:", { username, password });
+    setError("");
+    setLoading(true);
+
+    try {
+      // In a real app, this would connect to the backend API
+      console.log("Staff login attempt with:", { username, password });
+
+      // Simulate API call with hardcoded successful login for demo
+      const staffData = {
+        staffId: 1,
+        username: username,
+        firstName: "Admin",
+        lastName: "User",
+        position: "Manager",
+        department: "Operations"
+      };
+
+      // Store staff data in localStorage
+      localStorage.setItem("staff", JSON.stringify(staffData));
+      
+      // Redirect to staff dashboard
+      navigate("/staff-dashboard");
+
+    } catch (err) {
+      setError("Invalid staff credentials");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -92,6 +122,21 @@ const StaffLogin = () => {
             marginBottom: "24px",
             textAlign: "center"
           }}>Staff Login</h2>
+          
+          {error && (
+            <div style={{
+              backgroundColor: "#ffe2e5",
+              color: "#ef4444",
+              padding: "10px",
+              borderRadius: "4px",
+              marginBottom: "16px",
+              fontSize: "14px",
+              textAlign: "center"
+            }}>
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "16px" }}>
               <label
@@ -145,6 +190,7 @@ const StaffLogin = () => {
             </div>
             <button
               type="submit"
+              disabled={loading}
               style={{
                 width: "100%",
                 backgroundColor: "#1EAEDB",
@@ -154,10 +200,11 @@ const StaffLogin = () => {
                 borderRadius: "4px",
                 fontSize: "16px",
                 fontWeight: "500",
-                cursor: "pointer"
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1
               }}
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
           <div style={{
